@@ -71,10 +71,12 @@ docker build -t elk-docker .
 2. Then you need to run following commands in <b>/elk-docker/nginx-filebeat/</b>:
 
 ```
+docker stop elk
 docker stop elk_filebeat
 docker stop elk-docker
 docker stop elk_filebeat-docker
 
+docker rm elk
 docker rm elk_filebeat
 docker rm elk-docker
 docker rm elk_filebeat-docker
