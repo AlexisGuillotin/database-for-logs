@@ -1,15 +1,16 @@
 # database-for-logs
 
 Execute following command in cmd.exe to increase max size of VM:
+
 ```
 wsl -d docker-desktop
 sysctl -w vm.max_map_count=262144
 ```
+
 Pulling and building an existing ELK Stack docker image:
+
 ```
 git clone https://github.com/spujadas/elk-docker.git
-cd elk-docker
-docker build -t elk-docker .
 ```
 
 <h2 align=center>Installing Plugins:</h2>
@@ -22,6 +23,7 @@ sudo nano Dockerfile
 <h3>ElasticSearch</h3>
 
 1. Add the following at the end of the Dockerfile:
+
 ```
 FROM sebp/elk
 ENV ES_HOME /opt/elasticsearch
@@ -35,6 +37,7 @@ RUN yes | CONF_DIR=/etc/elasticsearch gosu elasticsearch bin/elasticsearch-plugi
 
 <h3>Logstash</h3>
 1. Add the following code to the Dockerfile:
+
 ```
 FROM sebp/elk
 WORKDIR ${LOGSTASH_HOME}
@@ -47,20 +50,42 @@ RUN gosu logstash bin/logstash-plugin install <plugin name>
 <h3>Kibana</h3>
 
 1. Insert the following code at the end of the Dockerfile:
+
 ```
 FROM sebp/elk
 WORKDIR ${KIBANA_HOME}
 RUN gosu kibana bin/kibana-plugin install <plugin name or link>;
 ```
+
 2. Save the file and close.
 3. Build the Docker image and check the output for the installation results.
 
 <h2 align=center>Running the ELK Container</h2>
 
-From the Image via Command:
+1. Run following commands in <b>/elk-docker</b>:
+
 ```
-sudo docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk elk-docker
+docker build -t elk-docker .
 ```
+
+2. Then you need to run following commands in <b>/elk-docker/nginx-filebeat/</b>:
+
+```
+docker stop elk
+docker stop elk_filebeat
+docker stop elk-docker
+docker stop elk_filebeat-docker
+
+docker rm elk
+docker rm elk_filebeat
+docker rm elk-docker
+docker rm elk_filebeat-docker
+
+docker network create -d bridge elknet
+docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk --network=elknet elk-docker
+docker run -p 80:80 -it --name elk_filebeat --network=elknet elk_filebeat-docker
+```
+
 The command publishes the following ports:
 * 5601: Kibana web interface.
 * 9200: Elasticsearch JSON interface.
