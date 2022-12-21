@@ -84,6 +84,15 @@ docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk --network=elkne
 docker run -p 80:80 -it --name elk_filebeat --network=elknet elk_filebeat-docker
 ```
 
+Install Elastic Agent on elk_filebeats:
+
+```
+docker exec -it elk_filebeat /bin/bash
+curl -L -O https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-8.5.3-linux-x86_64.tar.gz
+tar xzvf elastic-agent-8.5.3-linux-x86_64.tar.gz
+cd elastic-agent-8.5.3-linux-x86_64
+sudo ./elastic-agent install --url=https://eb844be5acaa4359971c6893b1273c64.fleet.us-central1.gcp.cloud.es.io:443 --enrollment-token=cDhNbUc0VUJnNHBmUHkxQU5KMkc6QldyTF9vdm9UalNfRGV3OGIyaHdxdw==
+```
 The command publishes the following ports:
 * 5601: Kibana web interface.
 * 9200: Elasticsearch JSON interface.
@@ -91,6 +100,11 @@ The command publishes the following ports:
 
 <b>Access Kibana web interface with </b>http://<host>:5601
 
+<h3>Documentation</h3>
+
+* <a href="https://www.elastic.co/guide/index.html?blade=cloud.elastic.co">Elastic documentation</a>
+* <a href="https://www.elastic.co/guide/en/cloud/current/ec-cloud-ingest-data.html?blade=cloud.elastic.co">Indexing data into Elasticsearch</a>
+* <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html?blade=cloud.elastic.co" >Elasticsearch REST API</a>
 
 <h3>Acknowledgments</h3>
 
